@@ -31,6 +31,8 @@ class PID {
    */
   double TotalError();
 
+  double GetSteering(double cte, double speed, double angle);
+
  private:
   /**
    * PID Errors
@@ -45,6 +47,13 @@ class PID {
   double Kp;
   double Ki;
   double Kd;
+
+  /**
+   * CTE variable
+   */
+  double prev_cte;
+  double integral_cte;
+  bool is_prev_cte_valid;
 };
 
 #endif  // PID_H
