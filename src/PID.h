@@ -1,6 +1,11 @@
 #ifndef PID_H
 #define PID_H
 
+#include <iostream>
+#include <vector>
+
+using std::vector;
+
 class PID {
  public:
   /**
@@ -17,7 +22,7 @@ class PID {
    * Initialize PID.
    * @param (Kp_, Ki_, Kd_) The initial PID coefficients
    */
-  void Init(double Kp_, double Ki_, double Kd_);
+  void Init(double Kp_, double Ki_, double Kd_, double tolerance);
 
   /**
    * Update the PID error variables given cross track error.
@@ -31,7 +36,7 @@ class PID {
    */
   double TotalError();
 
-  double GetSteering(double cte, double speed, double angle);
+  double GetSteering(double cte);
 
  private:
   /**
@@ -54,6 +59,10 @@ class PID {
   double prev_cte;
   double integral_cte;
   bool is_prev_cte_valid;
+
+  double tol;
+  vector<double> params;
+  vector<double> change_factors;
 };
 
 #endif  // PID_H
