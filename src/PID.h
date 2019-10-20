@@ -22,7 +22,7 @@ class PID {
    * Initialize PID.
    * @param (Kp_, Ki_, Kd_) The initial PID coefficients
    */
-  void Init(double Kp_, double Ki_, double Kd_, double tolerance);
+  void Init(double Kp_, double Ki_, double Kd_);
 
   /**
    * Update the PID error variables given cross track error.
@@ -59,10 +59,6 @@ class PID {
   double prev_cte;
   double integral_cte;
   bool is_prev_cte_valid;
-
-  double tol;
-  vector<double> params;
-  vector<double> change_factors;
 };
 
 #endif  // PID_H

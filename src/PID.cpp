@@ -10,7 +10,7 @@ PID::PID() {
 
 PID::~PID() {}
 
-void PID::Init(double Kp_, double Ki_, double Kd_, double tolerance) {
+void PID::Init(double Kp_, double Ki_, double Kd_) {
   /**
    * TODO: Initialize PID coefficients (and errors, if needed)
    */
@@ -22,28 +22,15 @@ void PID::Init(double Kp_, double Ki_, double Kd_, double tolerance) {
   Ki = Ki_;
   Kd = Kd_;
 
-  tol = tolerance;
-
   prev_cte = 0.0;
   integral_cte = 0.0;
   is_prev_cte_valid = false;
-
-  params.push_back(Kp);
-  params.push_back(Kd);
-  params.push_back(Ki);
-
-  change_factors.push_back(1.0);
-  change_factors.push_back(1.0);
-  change_factors.push_back(1.0);
 }
 
 void PID::UpdateError(double cte) {
   /**
    * TODO: Update PID errors based on cte.
    */
-  p_error = cte * cte;
-  i_error = cte * cte;
-  d_error = cte * cte;
 }
 
 double PID::TotalError() {

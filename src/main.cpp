@@ -37,7 +37,7 @@ int main() {
   /**
    * TODO: Initialize the pid variable.
    */
-  pid.Init(.2 , .0001 , 3.0, 0.001);
+  pid.Init(.2 , .0001 , 3.0);
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
                      uWS::OpCode opCode) {
@@ -67,6 +67,7 @@ int main() {
            */
           steer_value = pid.GetSteering(cte);
           steer_value = (steer_value > 1) ? 1 : (steer_value < -1) ? -1 : steer_value;
+          //apply brakes when steering angle exceeds limit
           if ((steer_value == 1)  || (steer_value == -1) ){
             new_throttle = -0.1;
           }
