@@ -30,14 +30,24 @@ string hasData(string s) {
   return "";
 }
 
+static bool find_params_by_twiddle = false;//make it true to run twiddle to find optimal params
+
 int main() {
   uWS::Hub h;
 
   PID pid;
+
   /**
    * TODO: Initialize the pid variable.
    */
-  pid.Init(.2 , .0001 , 3.0);
+  if(find_params_by_twiddle){
+    pid.Init(0.0 , 0.0 , 0.0, find_params_by_twiddle); 
+  }
+  else {
+    //These params are by using twiddle method mixed with some manual
+    //tuning
+    pid.Init(0.2 , 0.0001 , 3.0);
+  }
 
   h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, 
                      uWS::OpCode opCode) {
@@ -65,15 +75,33 @@ int main() {
            * NOTE: Feel free to play around with the throttle and speed.
            *   Maybe use another PID controller to control the speed!
            */
+          if(find_params_by_twiddle) {
+            int ret = pid.UpdateError(cte);
+            if(ret == 0) {
+              //do nothing keep running car
+            }
+            else if(ret == 1) {
+              //reset car position
+              string msg = "42[\"reset\",{}]";
+              std::cout << msg << std::endl;
+              ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+            }
+            else if(ret == 2) {
+              //convergence
+              string msg = "42[\"manual\",{}]";
+              std::cout << msg << std::endl;
+              ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
+              while(1);
+            }
+          }
           steer_value = pid.GetSteering(cte);
           steer_value = (steer_value > 1) ? 1 : (steer_value < -1) ? -1 : steer_value;
           //apply brakes when steering angle exceeds limit
-          if ((steer_value == 1)  || (steer_value == -1) ){
+          if (((steer_value == 1)  || (steer_value == -1) ) && (find_params_by_twiddle == false)){
             new_throttle = -0.1;
           }
           // DEBUG
-          std::cout << "CTE: " << cte << " Steering Value: " << steer_value 
-                    << std::endl;
+          // std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
